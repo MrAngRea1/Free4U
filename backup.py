@@ -12,8 +12,7 @@ def connect_sheet():
         "credentials.json", SCOPE
     )
     client = gspread.authorize(creds)
-    sheet = client.open("Free4U_Backup").sheet1
-    return sheet
+    return client.open("Free4U_Backup").sheet1
 
 def backup_to_sheet(files_data):
     sheet = connect_sheet()
