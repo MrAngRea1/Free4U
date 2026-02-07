@@ -242,10 +242,4 @@ async def add(
 
 # -- RUN --
 keep_alive()
-bot.run(os.getenv("TOKEN_BOT"))
-
-
-
-
-
-
+bot.run(os.getenv(TOKEN_BOT))
