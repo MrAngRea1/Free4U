@@ -1,2 +1,4 @@
 nextcord
 flask
+gspread
+oauth2client
