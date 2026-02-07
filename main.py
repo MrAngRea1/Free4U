@@ -1,8 +1,9 @@
 import nextcord, os, json
 from nextcord.ext import commands
-from nextcord import Interaction, SlashOption
+from nextcord import Interaction
 from nextcord.ui import View, Select, Button
 from server import keep_alive
+from sheets import connect_sheet
 
 intents = nextcord.Intents.all()
 bot = commands.Bot(intents=intents)
@@ -12,28 +13,37 @@ IMG_BOT = "https://i.pinimg.com/originals/f2/51/97/f25197c789b8ad2de1d03a03ca141
 DATA_FILE = "data.json"
 DES_BOT = "แจกโค้ดบอทฟรี"
 
-@bot.event
-async def on_ready():
-    print(f"บอทแจกไฟล์ [/คำสั่ง] | {bot.user}")
-
+# -------- GOOGLE CREDENTIALS (ENV) --------
 def load_google_credentials():
     creds = os.getenv("GOOGLE_CREDENTIALS")
     if not creds:
         raise Exception("ไม่พบ GOOGLE_CREDENTIALS ใน ENV")
+
     with open("credentials.json", "w", encoding="utf-8") as f:
         f.write(creds)
 
-def load_data():
-    if not os.path.exists(DATA_FILE):
-        with open(DATA_FILE, "w", encoding="utf-8") as f:
-            json.dump({}, f, ensure_ascii=False, indent=4)
-        return {}
-    with open(DATA_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+# -------- LOCAL JSON --------
+def save_data(data):
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+# -------- GOOGLE SHEET BACKUP --------
+def backup_to_sheet(data):
+    sheet = connect_sheet()
+    sheet.clear()
+    sheet.append_row(["name", "description", "note", "image", "download"])
+    for name, d in data.items():
+        sheet.append_row([
+            name,
+            d["description"],
+            d["note"],
+            d["image"],
+            d["download"]
+        ])
 
 def load_data_from_backup():
-    backup = connect_backup()
-    records = backup.get_all_records()
+    sheet = connect_sheet()
+    records = sheet.get_all_records()
     data = {}
     for row in records:
         data[row["name"]] = {
@@ -44,13 +54,14 @@ def load_data_from_backup():
         }
     return data
 
-def save_data(data):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
-
+# -------- INIT --------
 load_google_credentials()
-files_data = load_data_from_backup()
-save_data(files_data)
+try:
+    files_data = load_data_from_backup()
+    save_data(files_data)
+except Exception as e:
+    print("โหลดข้อมูลจาก Google Sheet ไม่สำเร็จ:", e)
+    files_data = {}
 
 # -- Dropdown --
 class FileSelect(Select):
@@ -232,6 +243,7 @@ async def add(
 # -- RUN --
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
 
 
 
