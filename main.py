@@ -16,6 +16,13 @@ DES_BOT = "แจกโค้ดบอทฟรี"
 async def on_ready():
     print(f"บอทแจกไฟล์ [/คำสั่ง] | {bot.user}")
 
+def load_google_credentials():
+    creds = os.getenv("GOOGLE_CREDENTIALS")
+    if not creds:
+        raise Exception("ไม่พบ GOOGLE_CREDENTIALS ใน ENV")
+    with open("credentials.json", "w", encoding="utf-8") as f:
+        f.write(creds)
+
 def load_data():
     if not os.path.exists(DATA_FILE):
         with open(DATA_FILE, "w", encoding="utf-8") as f:
@@ -224,5 +231,6 @@ async def add(
 # -- RUN --
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
 
 
