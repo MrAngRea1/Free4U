@@ -31,9 +31,9 @@ def load_data():
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def load_data_from_sheet():
-    sheet = connect_sheet()
-    records = sheet.get_all_records()
+def load_data_from_backup():
+    backup = connect_backup()
+    records = backup.get_all_records()
     data = {}
     for row in records:
         data[row["name"]] = {
@@ -48,7 +48,8 @@ def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-files_data = load_data_from_sheet()
+load_google_credentials()
+files_data = load_data_from_backup()
 save_data(files_data)
 
 # -- Dropdown --
@@ -229,9 +230,9 @@ async def add(
     )
 
 # -- RUN --
-load_google_credentials()
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
 
 
 
