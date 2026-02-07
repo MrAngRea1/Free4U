@@ -21,15 +21,28 @@ def load_data():
         with open(DATA_FILE, "w", encoding="utf-8") as f:
             json.dump({}, f, ensure_ascii=False, indent=4)
         return {}
-
     with open(DATA_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
+
+def load_data_from_sheet():
+    sheet = connect_sheet()
+    records = sheet.get_all_records()
+    data = {}
+    for row in records:
+        data[row["name"]] = {
+            "description": row["description"],
+            "note": row["note"],
+            "image": row["image"],
+            "download": row["download"]
+        }
+    return data
 
 def save_data(data):
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
 
-files_data = load_data()
+files_data = load_data_from_sheet()
+save_data(files_data)
 
 # -- Dropdown --
 class FileSelect(Select):
@@ -211,4 +224,5 @@ async def add(
 # -- RUN --
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
 
