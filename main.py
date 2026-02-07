@@ -6,12 +6,21 @@ from server import keep_alive
 from sheets import connect_sheet
 
 intents = nextcord.Intents.all()
-bot = commands.Bot(intents=intents)
+bot = commands.Bot(intents=intents, auto_sync_application_commands=False)
 
 SUPPORT_LINK = "https://discord.gg/BCybjuZYH7"
 IMG_BOT = "https://i.pinimg.com/originals/f2/51/97/f25197c789b8ad2de1d03a03ca14111d.gif"
 DATA_FILE = "data.json"
 DES_BOT = "แจกโค้ดบอทฟรี"
+
+@bot.event
+async def on_ready():
+    try:
+        await bot.sync_application_commands()
+        print("SYNC COMMANDS OK")
+    except Exception as e:
+        print("SYNC ERROR:", e)
+    print(f"บอทออนไลน์ | {bot.user}")
 
 # -------- GOOGLE CREDENTIALS (ENV) --------
 def load_google_credentials():
@@ -243,3 +252,4 @@ async def add(
 # -- RUN --
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
