@@ -5,7 +5,7 @@ from nextcord.ui import View, Select, Button
 from sheets import connect_sheet
 
 intents = nextcord.Intents.all()
-bot = commands.Bot(intents=intents, auto_sync_application_commands=False)
+bot = commands.Bot(intents=intents)
 
 SUPPORT_LINK = "https://discord.gg/BCybjuZYH7"
 IMG_BOT = "https://i.pinimg.com/originals/f2/51/97/f25197c789b8ad2de1d03a03ca14111d.gif"
@@ -14,11 +14,10 @@ DES_BOT = "แจกโค้ดบอทฟรี"
 
 @bot.event
 async def on_ready():
-    try:
+    if not hasattr(bot, "synced"):
         await bot.sync_application_commands()
+        bot.synced = True
         print("SYNC COMMANDS OK")
-    except Exception as e:
-        print("SYNC ERROR:", e)
     print(f"บอทออนไลน์ | {bot.user}")
 
 # -------- GOOGLE CREDENTIALS (ENV) --------
@@ -250,3 +249,4 @@ async def add(
 
 # -- RUN --
 bot.run(os.getenv("TOKEN_BOT"))
+
