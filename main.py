@@ -2,7 +2,6 @@ import nextcord, os, json
 from nextcord.ext import commands
 from nextcord import Interaction
 from nextcord.ui import View, Select, Button
-from server import keep_alive
 from sheets import connect_sheet
 
 intents = nextcord.Intents.all()
@@ -250,6 +249,4 @@ async def add(
     )
 
 # -- RUN --
-keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
-
