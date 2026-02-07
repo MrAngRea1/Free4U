@@ -229,8 +229,10 @@ async def add(
     )
 
 # -- RUN --
+load_google_credentials()
 keep_alive()
 bot.run(os.getenv("TOKEN_BOT"))
+
 
 
 
